@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Camera {
+  createdAt           DateTime             @default(now())
+  faceDetectionEvents FaceDetectionEvent[]
+  id                  String               @id @default(cuid())
+  location            String?
+  name                String?
+  owner               String?
+  updatedAt           DateTime             @updatedAt
+}
+
+model FaceAnalysis {
+  age                 Int?
+  createdAt           DateTime                   @default(now())
+  emotions            Json?
+  eyeColor            EnumFaceAnalysisEyeColor?
+  faceDetectionEvents FaceDetectionEvent[]
+  faceShape           EnumFaceAnalysisFaceShape?
+  gender              EnumFaceAnalysisGender?
+  id                  String                     @id @default(cuid())
+  imageUrl            Json?
+  skinTone            EnumFaceAnalysisSkinTone?
+  timestamp           DateTime?
+  updatedAt           DateTime                   @updatedAt
+}
+
+model FaceDetectionEvent {
+  camera         Camera?       @relation(fields: [cameraId], references: [id])
+  cameraId       String?
+  createdAt      DateTime      @default(now())
+  faceAnalysis   FaceAnalysis? @relation(fields: [faceAnalysisId], references: [id])
+  faceAnalysisId String?
+  id             String        @id @default(cuid())
+  timestamp      DateTime?
+  updatedAt      DateTime      @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumFaceAnalysisEyeColor {
+  Option1
+}
+
+enum EnumFaceAnalysisFaceShape {
+  Option1
+}
+
+enum EnumFaceAnalysisGender {
+  Option1
+}
+
+enum EnumFaceAnalysisSkinTone {
+  Option1
+}
